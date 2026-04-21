@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kostenloser Eigenbeleg Generator – Claudia Weber</title>
+<meta name="description" content="Dein kostenloser Eigenbeleg Generator von Claudia Weber. Erstelle professionelle, steuerkonform Eigenbelege in wenigen Minuten.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --purple:#5B2D8E;
+  --purple-dark:#3D1A6B;
+  --purple-light:#7B4DB8;
+  --mint:#8ECFC4;
+  --mint-dark:#6DBFB3;
+  --lavender:#EAE6F4;
+  --dark:#1A1A2E;
+  --white:#FFFFFF;
+  --gray:#6B6B7B;
+  --bg:#F8F6FC;
+  --border:#D5CCE8;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--dark);line-height:1.6;min-height:100vh}
+
+/* ── Noise overlay ── */
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E")}
+
+.wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:48px 20px 64px}
+
+/* ── Header ── */
+.header{text-align:center;margin-bottom:48px}
+.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:28px}
+.flower{width:44px;height:44px}
+.brand-name{font-size:18px;font-weight:600;letter-spacing:.04em;color:var(--purple)}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(142,207,196,.15);color:var(--mint-dark);border:1px solid rgba(142,207,196,.4);border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:5px 14px;margin-bottom:20px}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--mint)}
+h1{font-size:clamp(26px,5vw,38px);font-weight:700;letter-spacing:-.03em;line-height:1.15;color:var(--dark);margin-bottom:14px}
+h1 em{color:var(--purple);font-style:normal}
+.sub{font-size:15px;color:var(--gray);max-width:440px;margin:0 auto;line-height:1.7}
+
+/* ── Cards ── */
+.cards{display:flex;flex-direction:column;gap:16px;margin-bottom:32px}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:28px;display:flex;align-items:flex-start;gap:20px;text-decoration:none;color:inherit;transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(91,45,142,.03),rgba(142,207,196,.03));opacity:0;transition:opacity .2s}
+.card:hover{border-color:var(--purple);transform:translateY(-3px);box-shadow:0 16px 40px rgba(91,45,142,.12)}
+.card:hover::before{opacity:1}
+
+.card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px}
+.card-icon.purple{background:var(--lavender)}
+.card-icon.mint{background:rgba(142,207,196,.15)}
+
+.card-body{flex:1}
+.card-tag{font-size:10px;font-weight:600;color:var(--purple);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.card-title{font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--dark);margin-bottom:6px}
+.card-desc{font-size:13px;color:var(--gray);line-height:1.6}
+.card-features{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.feat{background:var(--lavender);color:var(--purple);font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px}
+.card-arrow{font-size:20px;color:var(--border);transition:color .2s;flex-shrink:0;align-self:center;margin-left:4px}
+.card:hover .card-arrow{color:var(--purple)}
+
+/* ── Primary CTA card ── */
+.card.primary{background:linear-gradient(135deg,var(--purple) 0%,var(--purple-light) 100%);border-color:transparent;color:var(--white)}
+.card.primary:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(91,45,142,.35)}
+.card.primary .card-tag{color:var(--mint)}
+.card.primary .card-title{color:var(--white)}
+.card.primary .card-desc{color:rgba(255,255,255,.7)}
+.card.primary .feat{background:rgba(255,255,255,.15);color:var(--white)}
+.card.primary .card-arrow{color:rgba(255,255,255,.4)}
+.card.primary:hover .card-arrow{color:var(--white)}
+.card.primary::before{display:none}
+
+/* ── Divider ── */
+.divider{display:flex;align-items:center;gap:12px;color:var(--border);font-size:12px;color:var(--gray);margin:4px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── Footer info ── */
+.info{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px 24px;display:flex;gap:20px;align-items:flex-start}
+.info-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.info-text{font-size:13px;color:var(--gray);line-height:1.6}
+.info-text strong{color:var(--dark);font-weight:500}
+
+/* ── Bottom ── */
+.bottom{text-align:center;margin-top:32px}
+.bottom p{font-size:12px;color:var(--border);color:#B0A8C8}
+.bottom a{color:var(--purple);text-decoration:none;font-weight:500}
+.bottom a:hover{text-decoration:underline}
+
+/* ── Download indicator ── */
+.dl-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(142,207,196,.12);color:var(--mint-dark);font-size:10px;font-weight:600;letter-spacing:.06em;padding:2px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}
+
+@media(max-width:500px){
+  .card{flex-direction:column;gap:14px}
+  .card-arrow{align-self:flex-end;margin-left:auto}
+  .info{flex-direction:column;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <svg class="flower" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="30" cy="19" r="11" fill="#8ECFC4"/>
+        <circle cx="41" cy="30" r="11" fill="#8ECFC4"/>
+        <circle cx="30" cy="41" r="11" fill="#8ECFC4"/>
+        <circle cx="19" cy="30" r="11" fill="#8ECFC4"/>
+        <circle cx="39.8" cy="20.2" r="8" fill="#6DBFB3"/>
+        <circle cx="39.8" cy="39.8" r="8" fill="#6DBFB3"/>
+        <circle cx="20.2" cy="39.8" r="8" fill="#6DBFB3"/>
+        <circle cx="20.2" cy="20.2" r="8" fill="#6DBFB3"/>
+        <circle cx="30" cy="30" r="7" fill="#5B2D8E"/>
+        <circle cx="30" cy="30" r="2.5" fill="white"/>
+      </svg>
+      <span class="brand-name">CLAUDIA WEBER</span>
+    </div>
+    <div class="badge">Kostenloses Freebie</div>
+    <h1>Dein <em>Eigenbeleg Generator</em><br>– 100 % kostenlos</h1>
+    <p class="sub">Erstelle professionelle, steuerkonformen Eigenbelege mit deinem eigenen Branding. In unter 3 Minuten, direkt im Browser – ohne Anmeldung.</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards">
+
+    <!-- Generator -->
+    <a href="eigenbeleg-generator-pro.html" class="card primary" download>
+      <div class="card-icon purple" style="background:rgba(255,255,255,.15)">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Generator herunterladen</div>
+        <div class="card-title">Eigenbeleg Generator <span class="dl-badge">↓ .html</span></div>
+        <div class="card-desc">Passe Farben, Logo und Firmenname an – berechne Beträge mit automatischer MwSt. – lade deine Word-Vorlage herunter.</div>
+        <div class="card-features">
+          <span class="feat">Eigenes Branding</span>
+          <span class="feat">Betragsberechnung</span>
+          <span class="feat">Währung & MwSt. wählbar</span>
+          <span class="feat">Word-Vorlage .docx</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+    <div class="divider">oder zuerst die Anleitung lesen</div>
+
+    <!-- Anleitung -->
+    <a href="eigenbeleg-anleitung.html" class="card">
+      <div class="card-icon mint">
+        <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#5B2D8E" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div class="card-body">
+        <div class="card-tag">Schritt-für-Schritt</div>
+        <div class="card-title">Anleitung & Kurzüberblick</div>
+        <div class="card-desc">5 einfache Schritte erklärt – mit visuellen Beispielen, Tipps und häufigen Fragen zum Eigenbeleg.</div>
+        <div class="card-features">
+          <span class="feat">5 Schritte</span>
+          <span class="feat">Visuelle Beispiele</span>
+          <span class="feat">FAQ</span>
+        </div>
+      </div>
+      <div class="card-arrow">→</div>
+    </a>
+
+  </div>
+
+  <!-- Info box -->
+  <div class="info">
+    <div class="info-icon">🔒</div>
+    <div class="info-text">
+      <strong>100 % privat & sicher.</strong> Alle Dateien laufen lokal in deinem Browser – keine Daten werden übertragen, kein Login nötig, keine Installation. Lade beide Dateien einfach in denselben Ordner und öffne diese Seite im Browser.
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom">
+    <p>Ein Freebie von <a href="#">Claudia Weber – Buchhaltung & Finanzen</a></p>
+  </div>
+
+</div>
+</body>
+</html>
