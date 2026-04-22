@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleitung – Eigenbeleg Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#5B2D8E;--gold:#8ECFC4;--gold-light:#EAE6F4;
+  --bg:#F5F3FA;--white:#FFFFFF;--gray:#888;--text:#1A1A1A;--border:#D5CCE8;
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+.hero{background:var(--navy);color:var(--white);padding:64px 24px 56px;text-align:center}
+.hero-badge{display:inline-block;background:rgba(142,207,196,.2);color:#6DBFB3;border:1px solid rgba(142,207,196,.4);border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;margin-bottom:20px}
+.hero h1{font-size:clamp(26px,5vw,44px);font-weight:700;letter-spacing:-.03em;line-height:1.15;margin-bottom:14px}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:16px;color:rgba(255,255,255,.65);max-width:520px;margin:0 auto 32px}
+.hero-dl{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:var(--navy);font-weight:600;font-size:14px;padding:13px 24px;border-radius:10px;text-decoration:none;transition:opacity .15s}
+.hero-dl:hover{opacity:.88}
+.hero-dl svg{flex-shrink:0}
+.steps{max-width:860px;margin:0 auto;padding:56px 24px 80px}
+.steps-intro{text-align:center;margin-bottom:48px}
+.steps-intro h2{font-size:22px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
+.steps-intro p{font-size:14px;color:var(--gray)}
+.step{display:grid;grid-template-columns:72px 1fr;gap:0 28px;margin-bottom:32px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:35px;top:72px;width:2px;height:calc(100% + 4px);background:var(--border)}
+.step-num{display:flex;flex-direction:column;align-items:center;z-index:1}
+.step-circle{width:50px;height:50px;border-radius:50%;background:var(--navy);color:var(--white);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 0 5px var(--bg)}
+.step.accent .step-circle{background:var(--gold);color:#fff}
+.step-body{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:24px 28px;margin-bottom:4px}
+.step-tag{font-size:10px;font-weight:600;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+/* override: gold is too light as text on white, use navy */
+.step-tag{color:var(--navy)}
+.step-title{font-size:18px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px;color:var(--navy)}
+.step-desc{font-size:14px;color:#555;line-height:1.65}
+.step-desc strong{color:var(--text);font-weight:500}
+.step-visual{margin-top:18px;border-radius:10px;overflow:hidden;border:1px solid var(--border);background:var(--bg)}
+.visual-bar{background:var(--navy);padding:8px 14px;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.25)}
+.visual-content{padding:16px}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch-item{display:flex;flex-direction:column;align-items:center;gap:5px}
+.swatch-circle{width:38px;height:38px;border-radius:50%;border:2px solid rgba(0,0,0,.07)}
+.swatch-label{font-size:10px;color:var(--gray);font-family:monospace}
+.mock-input{display:flex;align-items:center;gap:8px;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:8px;font-size:13px}
+.mock-input .ic{width:20px;height:20px;border-radius:4px;flex-shrink:0}
+.mock-input .line{flex:1;height:8px;border-radius:4px;background:var(--border)}
+.mock-input .val{font-family:monospace;font-size:11px;color:var(--navy);background:var(--gold-light);padding:2px 8px;border-radius:4px;font-weight:600}
+.mock-table{width:100%;border-collapse:collapse;font-size:12px}
+.mock-table th{background:var(--navy);color:white;padding:6px 10px;text-align:left;font-weight:500}
+.mock-table th:last-child{text-align:right}
+.mock-table td{padding:7px 10px;border-bottom:1px solid var(--border);color:#444}
+.mock-table td:last-child{text-align:right;font-weight:500;color:var(--navy)}
+.mock-table tr:nth-child(even) td{background:#F8F6FC}
+.mock-total-box{background:var(--navy);color:white;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:600}
+.mock-drop{border:1.5px dashed #C4B8DC;border-radius:8px;padding:18px;text-align:center;background:#F8F6FC}
+.mock-drop .arrow{font-size:24px;color:#8ECFC4;margin-bottom:4px}
+.mock-drop p{font-size:12px;color:var(--gray)}
+.mock-drop small{font-size:10px;color:#bbb}
+.mock-selects{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mock-sel{border:1px solid var(--border);border-radius:7px;padding:9px 12px;font-size:12px;background:var(--white)}
+.mock-sel .sel-label{font-size:9px;color:var(--gray);font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.mock-sel .sel-val{font-weight:500;color:var(--navy)}
+.mock-dl{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:var(--navy);font-weight:600;font-size:13px;padding:13px 20px;border-radius:9px;width:100%}
+.tips{background:var(--gold-light);border:1px solid rgba(142,207,196,.35);border-radius:10px;padding:16px 20px;margin-top:16px}
+.tips-title{font-size:11px;font-weight:700;color:var(--navy);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+.tips ul{list-style:none;padding:0}
+.tips li{font-size:13px;color:#555;padding:3px 0 3px 18px;position:relative}
+.tips li::before{content:'✦';position:absolute;left:0;color:var(--navy);font-size:9px;top:5px}
+.cta{background:var(--navy);border-radius:16px;padding:40px 32px;text-align:center;margin-top:8px}
+.cta h3{font-size:22px;font-weight:600;color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.cta p{font-size:14px;color:rgba(255,255,255,.55);margin-bottom:24px}
+.cta a{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--navy);font-weight:600;font-size:14px;padding:13px 28px;border-radius:10px;text-decoration:none;transition:opacity .15s}
+.cta a:hover{opacity:.88}
+.faq{margin-top:48px}
+.faq h3{font-size:16px;font-weight:600;margin-bottom:16px;color:var(--navy)}
+.faq-item{border-bottom:1px solid var(--border);padding:14px 0}
+.faq-q{font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px}
+.faq-a{font-size:13px;color:var(--gray);line-height:1.6}
+/* ── Mobile ── */
+@media(max-width:560px){
+  .hero{padding:44px 20px 40px}
+  .hero h1{font-size:26px}
+  .steps{padding:36px 16px 60px}
+  .step{grid-template-columns:48px 1fr;gap:0 14px}
+  .step-circle{width:40px;height:40px;font-size:15px}
+  .step:not(:last-child)::before{left:24px;top:60px}
+  .step-body{padding:18px 16px}
+  .step-title{font-size:16px}
+  .mock-selects{grid-template-columns:1fr}
+  .mock-table{font-size:11px}
+  .mock-table th,.mock-table td{padding:5px 7px}
+  .cta{padding:28px 20px}
+  .cta h3{font-size:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">Kostenloser Download · Freebie</div>
+  <h1>Dein persönlicher<br><span>Eigenbeleg Generator</span></h1>
+  <p>In 5 einfachen Schritten zum professionellen, steuerkonformen Eigenbeleg – fertig in unter 3 Minuten.</p>
+  <a href="eigenbeleg-generator.html" class="hero-dl">
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+    Generator öffnen
+  </a>
+</div>
+
+<div class="steps">
+  <div class="steps-intro">
+    <h2>So funktioniert es</h2>
+    <p>Alle Dateien in einen Ordner legen, <strong>index.html</strong> im Browser öffnen – fertig. Kein Login, keine Installation.</p>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step">
+    <div class="step-num"><div class="step-circle">1</div></div>
+    <div>
+      <div class="step-body">
+        <div class="step-tag">Start</div>
+        <div class="step-title">Dateien in einen Ordner legen & öffnen</div>
+        <div class="step-desc">
+          Lege alle drei Dateien (<strong>index.html</strong>, <strong>eigenbeleg-generator.html</strong> und <strong>eigenbeleg-anleitung.html</strong>) in denselben Ordner. Öffne dann <strong>index.html</strong> per Doppelklick im Browser (Chrome, Firefox, Safari, Edge).
+        </div>
+        <div class="step-visual">
+          <div class="visual-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="visual-content">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;background:#F5F3FA;border:1px solid #D5CCE8;border-radius:8px;padding:10px 14px;font-size:13px;color:#555">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#EAE6F4"/><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="#5B2D8E" stroke-width="1.5" fill="white"/><path d="M14 2v4h4" stroke="#5B2D8E" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="4" fill="#5B2D8E" font-family="monospace" font-weight="bold">HTML</text></svg>
+                <div style="flex:1"><div style="font-weight:600;color:#5B2D8E;font-size:12px">index.html</div><div style="font-size:10px;color:#aaa">Startseite – hier beginnen</div></div>
+                <div style="background:#5B2D8E;color:#fff;border-radius:5px;padding:4px 10px;font-size:11px;font-weight:600">Öffnen ↗</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;background:#F5F3FA;border:1px solid #D5CCE8;border-radius:8px;padding:10px 14px;font-size:13px;color:#555">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#EAE6F4"/><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="#5B2D8E" stroke-width="1.5" fill="white"/><path d="M14 2v4h4" stroke="#5B2D8E" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="4" fill="#8ECFC4" font-family="monospace" font-weight="bold">HTML</text></svg>
+                <div style="flex:1"><div style="font-weight:600;color:#5B2D8E;font-size:12px">eigenbeleg-generator.html</div><div style="font-size:10px;color:#aaa">Der Generator mit Muster-Farben</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;background:#F5F3FA;border:1px solid #D5CCE8;border-radius:8px;padding:10px 14px;font-size:13px;color:#555">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="4" fill="#EAE6F4"/><path d="M6 2h8l4 4v14a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z" stroke="#5B2D8E" stroke-width="1.5" fill="white"/><path d="M14 2v4h4" stroke="#5B2D8E" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="4" fill="#6DBFB3" font-family="monospace" font-weight="bold">HTML</text></svg>
+                <div style="flex:1"><div style="font-weight:600;color:#5B2D8E;font-size:12px">eigenbeleg-anleitung.html</div><div style="font-size:10px;color:#aaa">Diese Anleitung</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step">
+    <div class="step-num"><div class="step-circle">2</div></div>
+    <div>
+      <div class="step-body">
+        <div class="step-tag">Branding</div>
+        <div class="step-title">Firmenname & Farben anpassen</div>
+        <div class="step-desc">
+          Trage deinen <strong>Firmennamen</strong> ein. Klicke dann auf die Farbfelder, um deine eigenen Markenfarben zu wählen. Die Vorschau rechts aktualisiert sich sofort – du siehst das Ergebnis in Echtzeit.
+        </div>
+        <div class="step-visual">
+          <div class="visual-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="visual-content">
+            <div style="font-size:10px;color:#aaa;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-weight:600">Farben</div>
+            <div class="mock-input" style="margin-bottom:8px">
+              <div class="ic" style="background:#2C3E50"></div>
+              <span style="font-size:13px;color:#555;flex:1">Primärfarbe</span>
+              <span class="val">#2C3E50</span>
+            </div>
+            <div class="mock-input" style="margin-bottom:8px">
+              <div class="ic" style="background:#C5A46E"></div>
+              <span style="font-size:13px;color:#555;flex:1">Akzentfarbe</span>
+              <span class="val">#C5A46E</span>
+            </div>
+            <div class="mock-input" style="margin-bottom:8px">
+              <div class="ic" style="background:#EFF2F5;border:1px solid #D5CCE8"></div>
+              <span style="font-size:13px;color:#555;flex:1">Hintergrundfarbe</span>
+              <span class="val">#EFF2F5</span>
+            </div>
+            <div class="mock-input">
+              <div class="ic" style="background:#1A2332"></div>
+              <span style="font-size:13px;color:#555;flex:1">Footer-Farbe</span>
+              <span class="val">#1A2332</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step">
+    <div class="step-num"><div class="step-circle">3</div></div>
+    <div>
+      <div class="step-body">
+        <div class="step-tag">Logo</div>
+        <div class="step-title">Logo einfügen (optional)</div>
+        <div class="step-desc">
+          Klicke auf die gestrichelte Fläche, um dein Logo auszuwählen. Empfehlung: <strong>PNG-Datei mit transparentem Hintergrund</strong> im Querformat (z. B. 400×150 px).
+        </div>
+        <div class="step-visual">
+          <div class="visual-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="visual-content">
+            <div class="mock-drop">
+              <div class="arrow">↑</div>
+              <p><strong>Logo tippen zum Auswählen</strong></p>
+              <small>PNG · JPG · SVG &nbsp;·&nbsp; empfohlen: PNG transparent</small>
+            </div>
+            <div class="tips" style="margin-top:10px">
+              <div class="tips-title">Tipps zum Logo</div>
+              <ul>
+                <li>PNG mit <strong>transparentem Hintergrund</strong> empfohlen</li>
+                <li>Querformat ideal (z. B. 400 × 150 px)</li>
+                <li>Logo wird automatisch skaliert</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step accent">
+    <div class="step-num"><div class="step-circle">4</div></div>
+    <div>
+      <div class="step-body">
+        <div class="step-tag">Betragsberechnung</div>
+        <div class="step-title">Währung, MwSt. & Beträge eingeben</div>
+        <div class="step-desc">
+          Wähle deine <strong>Währung</strong> und den passenden <strong>MwSt.-Satz</strong>. Trage dann Leistung, Menge und Einzelpreis ein. <strong>Nettobetrag, MwSt. und Gesamtbetrag werden automatisch berechnet.</strong> Mit dem ＋-Button fügst du weitere Zeilen hinzu.
+        </div>
+        <div class="step-visual">
+          <div class="visual-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="visual-content">
+            <div class="mock-selects" style="margin-bottom:12px">
+              <div class="mock-sel"><div class="sel-label">Währung</div><div class="sel-val">€ – Euro</div></div>
+              <div class="mock-sel"><div class="sel-label">MwSt.-Satz</div><div class="sel-val">19 % (DE Standard)</div></div>
+            </div>
+            <table class="mock-table">
+              <thead><tr><th>Leistungsbeschreibung</th><th>Menge</th><th>Preis</th><th>Betrag</th></tr></thead>
+              <tbody>
+                <tr><td>Taxifahrt Messe Frankfurt</td><td>1</td><td>€ 38,50</td><td>€ 38,50</td></tr>
+                <tr><td>Parkgebühr Flughafen</td><td>2</td><td>€ 12,00</td><td>€ 24,00</td></tr>
+                <tr><td>Druckkosten Präsentation</td><td>1</td><td>€ 8,90</td><td>€ 8,90</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top:8px;display:flex;flex-direction:column;align-items:flex-end;gap:3px">
+              <div style="font-size:12px;color:#888">Nettobetrag: € 71,40</div>
+              <div style="font-size:12px;color:#888">MwSt. (19 %): € 13,57</div>
+              <div class="mock-total-box">GESAMT: € 84,97</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step">
+    <div class="step-num"><div class="step-circle">5</div></div>
+    <div>
+      <div class="step-body">
+        <div class="step-tag">Fertig</div>
+        <div class="step-title">Als PDF drucken / speichern</div>
+        <div class="step-desc">
+          Klicke auf den Button <strong>„Drucken / Als PDF speichern"</strong>. Im Browser-Druckdialog wähle <strong>„Als PDF speichern"</strong>. Aktiviere <strong>„Hintergrundgrafiken"</strong>, um alle Farben korrekt zu drucken.
+        </div>
+        <div class="step-visual">
+          <div class="visual-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+          <div class="visual-content">
+            <div style="background:#EFF2F5;border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;border-left:3px solid #C5A46E">
+              <div style="font-size:12px;font-weight:600;color:#2C3E50">EIGENBELEG</div>
+              <div style="font-size:10px;color:#6b7a8d">Ersatzbeleg gem. §14 UStG</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;background:#2C3E50;color:#C5A46E;font-weight:600;font-size:13px;padding:13px 20px;border-radius:9px;width:100%">
+              🖨 Drucken / Als PDF speichern
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:6px;background:#f0f7f5;border:1px solid #8ECFC4;border-radius:6px;padding:6px 10px;font-size:12px;color:#0F6E56"><span>✓</span> Hintergrundgrafiken aktivieren</div>
+              <div style="display:flex;align-items:center;gap:6px;background:#f0f7f5;border:1px solid #8ECFC4;border-radius:6px;padding:6px 10px;font-size:12px;color:#0F6E56"><span>✓</span> §14 UStG konform</div>
+            </div>
+          </div>
+        </div>
+        <div class="tips">
+          <div class="tips-title">Drucktipps</div>
+          <ul>
+            <li>Im Druckdialog <strong>„Als PDF speichern"</strong> wählen</li>
+            <li><strong>Hintergrundgrafiken</strong> aktivieren für volle Farbwiedergabe</li>
+            <li>Hochformat · DIN A4 empfohlen</li>
+            <li>PDF lässt sich direkt an die Buchhaltung senden</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <h3>Bereit loszulegen?</h3>
+    <p>Kostenlos, ohne Anmeldung – direkt im Browser nutzbar.</p>
+    <a href="eigenbeleg-generator.html">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      Generator jetzt öffnen
+    </a>
+  </div>
+
+  <!-- FAQ -->
+  <div class="faq">
+    <h3>Häufige Fragen</h3>
+    <div class="faq-item">
+      <div class="faq-q">Muss ich etwas installieren?</div>
+      <div class="faq-a">Nein. Die Dateien laufen direkt im Browser – kein Login, keine Installation, keine Cloud.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Werden meine Daten gespeichert oder übertragen?</div>
+      <div class="faq-a">Nein. Alle Daten bleiben ausschließlich auf deinem Gerät. Es gibt keine Server-Verbindung.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Welches Format sollte mein Logo haben?</div>
+      <div class="faq-a">PNG mit transparentem Hintergrund, Querformat (z.B. 400×150 px). Das Logo wird automatisch auf das richtige Seitenverhältnis skaliert.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Wie exportiere ich den Beleg als PDF?</div>
+      <div class="faq-a">Klicke auf „Drucken / Als PDF speichern" und wähle im Browser-Druckdialog „Als PDF speichern". Aktiviere „Hintergrundgrafiken" für volle Farbwiedergabe.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Wann darf ich einen Eigenbeleg nutzen?</div>
+      <div class="faq-a">Eigenbelege sind zulässig, wenn ein Originalbeleg nachweislich nicht beschaffbar war (z.B. Quittung verloren). Die Aufbewahrungspflicht beträgt 10 Jahre (§ 147 AO).</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
